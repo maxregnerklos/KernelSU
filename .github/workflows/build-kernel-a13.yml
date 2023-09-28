@@ -1,20 +1,22 @@
-name: Build Kernel - Android 13
+name: Build Android 13 Kernel
+
 on:
   push:
     branches: ["main", "ci"]
     paths:
-      - ".github/workflows/build-kernel-a13.yml"
+      - ".github/workflows/build-android13-kernel.yml"
       - ".github/workflows/gki-kernel.yml"
-      - ".github/scripts/build_a13.sh"
+      - ".github/scripts/build_android13.sh"
       - "kernel/**"
   pull_request:
     branches: ["main"]
     paths:
-      - ".github/workflows/build-kernel-a13.yml"
+      - ".github/workflows/build-android13-kernel.yml"
       - ".github/workflows/gki-kernel.yml"
-      - ".github/scripts/build-a13.sh"
+      - ".github/scripts/build_android13.sh"
       - "kernel/**"
   workflow_call:
+
 jobs:
   build-kernel:
     if: github.event_name != 'pull_request'
@@ -68,10 +70,11 @@ jobs:
       tag: android13-${{ matrix.version }}-${{ matrix.os_patch_level }}
       os_patch_level: ${{ matrix.os_patch_level }}
       patch_path: ${{ matrix.version }}
+
   upload-artifacts:
     needs: build-kernel
     runs-on: ubuntu-latest
-    if: ${{ ( github.event_name != 'pull_request' && github.ref == 'refs/heads/main' ) || github.ref_type == 'tag' || github.ref == 'refs/heads/ci' }}
+    if: ${{ (github.event_name != 'pull_request' && github.ref == 'refs/heads/main') || github.ref_type == 'tag' || github.ref == 'refs/heads/ci' }}
     env:
       CHAT_ID: ${{ secrets.CHAT_ID }}
       CACHE_CHAT_ID: ${{ secrets.CACHE_CHAT_ID }}
@@ -124,7 +127,7 @@ jobs:
           export VERSION=$(($(git rev-list --count HEAD) + 10200))
           echo "VERSION: $VERSION"
           cd -
-          bash $GITHUB_WORKSPACE/KernelSU/.github/scripts/build_a13.sh
+          bash $GITHUB_WORKSPACE/KernelSU/.github/scripts/build_android13.sh
       
       - name: Display structure of boot files
         run: ls -R
